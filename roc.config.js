@@ -1,4 +1,3 @@
-var merge = require('roc').merge;
 module.exports = {
   settings: {
     runtime: {
@@ -11,20 +10,25 @@ module.exports = {
       reducers: 'src/redux/reducers.js',
       routes: 'src/routes/index.js',
     },
+    test: {
+      tests: {
+        pattern: /test/i,
+        path: 'tests'
+      }
+    },
   },
   action: () => (rocObject) => {
-    if (rocObject.hook === 'build-webpack') {
-      const webpack = {
-        externals: {
-          'cheerio': 'window',
-          'react-dom': 'window',
-          'react/lib/ExecutionEnvironment': true,
-          'react/lib/ReactContext': true
-        },
+    if (rocObject.hook === 'build-webpack' && rocObject.settings.build.mode === 'test') {
+      const externals = {
+        'cheerio': 'window',
+        'react-dom': 'window',
+        'react/lib/ExecutionEnvironment': true,
+        'react/lib/ReactContext': true
       };
       return () => () => {
-        return merge(rocObject.previousValue, { buildConfig: webpack });
+        rocObject.previousValue.buildConfig.externals = externals;
+        return rocObject.previousValue;
       };
     }
-  }
+  },
 };

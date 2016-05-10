@@ -11,7 +11,6 @@ export default class App extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
   }
-
   render() {
     return (
       <div className={styles.main}>
